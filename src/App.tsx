@@ -1,96 +1,49 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Toaster } from "react-hot-toast";
-import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
-import Loader from "./components/Loader/Loader";
-import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
+import SearchBar from "./components/SearchBar/SearchBar";
+import LoadMoreButton from "./components/LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./components/ImageModal/ImageModal";
-
-interface Image {
-  id: string;
-  urls: { small: string; regular: string };
-  alt_description: string;
-  user: { name: string };
-  likes: number;
-}
+import { Image } from "./App.types";
 
 const UNSPLASH_ACCESS_KEY = "5n-PTfgQ7iP2vu8J-i93NOM_prStd1aRsB97Fj3CIaY";
 
 const App: React.FC = () => {
-  const [query, setQuery] = useState<string>("");
   const [images, setImages] = useState<Image[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!query) return;
+    if (!query.trim()) return;
 
-    const loadImages = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get<{ results: Image[] }>(
-          "https://api.unsplash.com/search/photos",
-          {
-            params: { query, page, per_page: 12 },
-            headers: { Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}` },
-          }
-        );
-
-        if (response.data.results) {
-          setImages((prevImages) => [...prevImages, ...response.data.results]);
-        } else {
-          throw new Error("Невірна структура відповіді API");
-        }
-        setError("");
-      } catch (err) {
-        console.error("Error details:", err);
-        setError("Помилка при завантаженні зображень. Спробуйте ще раз.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadImages();
+    fetch(
+      `https://api.unsplash.com/search/photos?query=${query}&page=${page}&client_id=${UNSPLASH_ACCESS_KEY}`
+    )
+      .then((response) => {
+        if (!response.ok) throw new Error("Unsplash API Error");
+        return response.json();
+      })
+      .then((data) =>
+        setImages((prevImages) => [...prevImages, ...data.results])
+      )
+      .catch((error) => console.error("API Fetch Error:", error));
   }, [query, page]);
 
-  const handleSearch = (newQuery: string) => {
-    setQuery(newQuery);
-    setImages([]);
-    setPage(1);
-  };
-
-  const handleLoadMore = () => setPage((prevPage) => prevPage + 1);
-
-  const handleImageClick = (image: Image) => {
-    setSelectedImage(image);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedImage(null);
-    setIsModalOpen(false);
-  };
+  const loadMoreImages = () => setPage((prevPage) => prevPage + 1);
+  const handleImageClick = (image: Image) => setSelectedImage(image);
 
   return (
     <div>
-      <Toaster position="top-right" />
-      <SearchBar onSubmit={handleSearch} />
-      {error && <ErrorMessage message={error} />}
+      <h1>Image Gallery</h1>
+      <SearchBar onSearch={setQuery} />
       <ImageGallery images={images} onImageClick={handleImageClick} />
-      {loading && <Loader />}
-      {images.length > 0 && !loading && (
-        <LoadMoreBtn onClick={handleLoadMore} />
-      )}
+      {images.length > 0 && <LoadMoreButton onClick={loadMoreImages} />}
       <ImageModal
-        isOpen={isModalOpen}
+        isOpen={!!selectedImage}
         image={selectedImage}
-        onClose={handleCloseModal}
-      />
+        onClose={() => setSelectedImage(null)}
+      />{" "}
+      {}
     </div>
   );
 };

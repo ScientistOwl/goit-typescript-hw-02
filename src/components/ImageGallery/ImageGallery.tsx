@@ -1,12 +1,7 @@
 import React from "react";
 import ImageCard from "../ImageCard/ImageCard";
 import styles from "./ImageGallery.module.css";
-
-interface Image {
-  id: string;
-  urls: { small: string };
-  alt_description: string;
-}
+import { Image } from "../../App/App.types";
 
 interface ImageGalleryProps {
   images: Image[];
@@ -19,7 +14,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 }) => {
   return (
     <ul className={styles.gallery}>
-      {images.map((image) => (
+      {images?.map((image) => (
         <li key={image.id} className={styles.galleryItem}>
           <ImageCard image={image} onClick={onImageClick} />
         </li>

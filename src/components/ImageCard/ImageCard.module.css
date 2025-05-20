@@ -1,0 +1,15 @@
+.card {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}

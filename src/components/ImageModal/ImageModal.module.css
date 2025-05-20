@@ -1,0 +1,48 @@
+.overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.info {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.closeBtn {
+  margin: 20px auto 0;
+  display: block;
+  padding: 10px 20px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.closeBtn:hover {
+  background-color: #e60000;
+}

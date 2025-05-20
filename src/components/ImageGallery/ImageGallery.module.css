@@ -1,20 +1,17 @@
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  list-style: none;
-  margin: 0;
+  column-count: 3;
+  column-gap: 16px;
 }
 
 .galleryItem {
-  overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 16px;
 }
 
-.galleryItem:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+.galleryItem img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
 }

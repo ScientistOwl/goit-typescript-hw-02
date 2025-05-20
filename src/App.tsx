@@ -8,17 +8,24 @@ import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./components/ImageModal/ImageModal";
 
-const App = () => {
-  const [query, setQuery] = useState("");
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [page, setPage] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface Image {
+  id: string;
+  urls: { small: string; regular: string };
+  alt_description: string;
+  user: { name: string };
+  likes: number;
+}
 
-  // Ключ доступу
-  const UNSPLASH_ACCESS_KEY = "5n-PTfgQ7iP2vu8J-i93NOM_prStd1aRsB97Fj3CIaY";
+const UNSPLASH_ACCESS_KEY = "5n-PTfgQ7iP2vu8J-i93NOM_prStd1aRsB97Fj3CIaY";
+
+const App: React.FC = () => {
+  const [query, setQuery] = useState<string>("");
+  const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!query) return;
@@ -26,20 +33,15 @@ const App = () => {
     const loadImages = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `https://api.unsplash.com/search/photos`,
+        const response = await axios.get<{ results: Image[] }>(
+          "https://api.unsplash.com/search/photos",
           {
-            params: {
-              query: query,
-              page: page,
-              per_page: 12,
-            },
-            headers: {
-              Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
-            },
+            params: { query, page, per_page: 12 },
+            headers: { Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}` },
           }
         );
-        if (response.data && response.data.results) {
+
+        if (response.data.results) {
           setImages((prevImages) => [...prevImages, ...response.data.results]);
         } else {
           throw new Error("Невірна структура відповіді API");
@@ -56,7 +58,7 @@ const App = () => {
     loadImages();
   }, [query, page]);
 
-  const handleSearch = (newQuery) => {
+  const handleSearch = (newQuery: string) => {
     setQuery(newQuery);
     setImages([]);
     setPage(1);
@@ -64,7 +66,7 @@ const App = () => {
 
   const handleLoadMore = () => setPage((prevPage) => prevPage + 1);
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image: Image) => {
     setSelectedImage(image);
     setIsModalOpen(true);
   };

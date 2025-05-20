@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Loader.module.css";
 import { ClipLoader } from "react-spinners";
 
-const Loader = () => {
+const Loader: React.FC = () => {
   return (
     <div className={styles.loader}>
       <ClipLoader color="#4a90e2" size={50} />
